@@ -1,0 +1,94 @@
+generated: '2026-08-12'
+method: searched
+source: live probes of the /.well-known/ surface on every Dolls Kill host
+host: https://www.dollskill.com
+hosts_probed:
+- https://www.dollskill.com
+- https://account.dollskill.com
+- https://help.dollskill.com
+documents:
+- path: /.well-known/ucp
+  host: www.dollskill.com
+  status: 200
+  content_type: application/json
+  file: dolls-kill-ucp.json
+  note: 'Universal Commerce Protocol merchant profile — version 2026-04-08 (plus 2026-01-23),
+    services, capabilities and payment handlers. Not an IANA-registered well-known
+    path; defined by ucp.dev.'
+- path: /.well-known/ucp/2026-04-08
+  host: www.dollskill.com
+  status: 200
+  content_type: application/json
+  note: Version-pinned copy of the same merchant profile; body identical to /.well-known/ucp.
+- path: /.well-known/openid-configuration
+  host: www.dollskill.com
+  status: 200
+  content_type: application/json
+  file: dolls-kill-openid-configuration.json
+  note: OpenID Connect Discovery 1.0. Issuer https://shopify.com/authentication/63463358721,
+    endpoints on account.dollskill.com, 4 scopes, PKCE S256, RS256 id tokens.
+- path: /.well-known/oauth-authorization-server
+  host: www.dollskill.com
+  status: 200
+  content_type: application/json
+  file: dolls-kill-oauth-authorization-server.json
+  note: RFC 8414 authorization server metadata; body identical to the OIDC discovery
+    document.
+- path: /.well-known/oauth-protected-resource
+  host: www.dollskill.com
+  status: 200
+  content_type: application/json
+  file: dolls-kill-oauth-protected-resource.json
+  note: RFC 9728 protected resource metadata — resource https://www.dollskill.com,
+    two authorization servers, bearer token in header.
+- path: /.well-known/openid-configuration
+  host: account.dollskill.com
+  status: 200
+  content_type: application/json
+  note: Same discovery document served from the customer-account host.
+- path: /.well-known/apple-app-site-association
+  host: www.dollskill.com
+  status: 200
+  content_type: application/json
+  note: 'Served but empty — {"applinks":{"apps":[],"details":[]}} — so it declares no
+    universal links despite Dolls Kill shipping iOS and Android apps.'
+- path: /.well-known/security.txt
+  host: www.dollskill.com
+  status: 404
+- path: /.well-known/security.txt
+  host: help.dollskill.com
+  status: 404
+- path: /.well-known/api-catalog
+  host: www.dollskill.com
+  status: 404
+- path: /.well-known/ai-plugin.json
+  host: www.dollskill.com
+  status: 404
+- path: /.well-known/agent-card.json
+  host: www.dollskill.com
+  status: 404
+- path: /.well-known/agent-card.json
+  host: account.dollskill.com
+  status: 404
+- path: /.well-known/agent.json
+  host: www.dollskill.com
+  status: 404
+summary:
+  probed: 14
+  hits: 7
+  misses: 7
+  security_txt: false
+  api_catalog: false
+  agent_card: false
+  oidc_discovery: true
+  oauth_metadata: true
+  ucp_profile: true
+notes:
+- 'No security.txt is served on any host, so no SecurityTxt pointer is emitted and
+  security/dolls-kill-vulnerability-disclosure.yml was not written — the probe found
+  no disclosure policy, contact, or bug bounty program.'
+- 'No A2A agent card at either the canonical /.well-known/agent-card.json or the legacy
+  /.well-known/agent.json on any host. All four probes returned HTTP 404 with an HTML
+  storefront body. No a2a/ artifact was written.'
+- 'Agent discovery here runs through robots.txt -> /agents.md -> /.well-known/ucp ->
+  /api/ucp/mcp rather than through an api-catalog or agent card.'

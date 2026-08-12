@@ -1,18 +1,96 @@
 aid: dolls-kill
 name: Dolls Kill
-description: 'Dolls Kill is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Dolls Kill is a Los Angeles-based online fashion boutique for alternative,
+  punk, goth, glam, rave and festival style, founded in 2011 and operating dollskill.com
+  plus physical store locations. Its commerce platform runs on Shopify, and its public
+  machine-readable surface is agent-facing rather than a conventional developer program:
+  the storefront serves an agents.md / llms.txt agent instruction document, a Universal
+  Commerce Protocol (UCP) merchant profile at /.well-known/ucp, a live anonymous-readable
+  MCP endpoint at /api/ucp/mcp exposing 13 catalog, cart, checkout and order tools,
+  an openly introspectable Shopify Storefront GraphQL API, and OAuth 2.0 / OpenID
+  Connect discovery for customer accounts. Dolls Kill publishes no developer portal,
+  no OpenAPI, no SDKs and no API pricing — the API surface exists to let shopping
+  agents transact, under an explicit human-approval-before-payment rule.'
+image: https://www.dollskill.com/cdn/shop/files/logo.jpg?v=1709315110
 url: https://raw.githubusercontent.com/api-evangelist/dolls-kill/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-12'
 modified: '2026-08-12'
 tags:
 - Company
-apis: []
+- Retail
+- E-commerce
+- Fashion
+- Apparel
+- Commerce
+- Shopify
+- Agentic Commerce
+- Universal Commerce Protocol
+- MCP
+- GraphQL
+- Direct to Consumer
+apis:
+- name: Dolls Kill UCP Commerce MCP API
+  description: 'The Dolls Kill Universal Commerce Protocol (UCP) endpoint, served over
+    MCP at /api/ucp/mcp. Anonymous tools/list returns 13 tools with full JSON Schema
+    input contracts covering catalog search and lookup, product retrieval, cart create/read/update/cancel,
+    checkout create/read/update/complete/cancel, and order retrieval. Tool invocation
+    requires a resolvable UCP agent profile URI in meta.ucp-agent.profile; completing
+    a checkout additionally requires meta.idempotency-key and explicit contemporaneous
+    buyer approval of payment.'
+  humanURL: https://www.dollskill.com/agents.md
+  baseURL: https://www.dollskill.com/api/ucp/mcp
+  tags:
+  - MCP
+  - Agentic Commerce
+  - Universal Commerce Protocol
+  - Checkout
+  - Catalog
+  properties:
+  - type: MCPServer
+    url: mcp/dolls-kill-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/dolls-kill-tool-crosswalk.yml
+  - type: Documentation
+    url: https://www.dollskill.com/agents.md
+- name: Dolls Kill Storefront GraphQL API
+  description: 'The Shopify Storefront GraphQL API as served from Dolls Kill''s own
+    host at /api/{version}/graphql.json. Anonymous introspection succeeds without a
+    storefront access token, returning 424 types, 31 root query fields (product, products,
+    collection, collections, search, predictiveSearch, cart, shop, menu, metaobjects,
+    localization and more) and 41 mutations (the cart* family, customerAccessToken*,
+    customer*, shopPayPaymentRequestSessionCreate). Versioned on Shopify''s dated release
+    calendar; 2025-10 through 2026-07 are supported.'
+  humanURL: https://www.dollskill.com/agents.md
+  baseURL: https://www.dollskill.com/api/2026-04/graphql.json
+  tags:
+  - GraphQL
+  - Storefront
+  - Catalog
+  - Cart
+  properties:
+  - type: GraphQL
+    url: graphql/dolls-kill-storefront.graphql
+  - type: DataModel
+    url: data-model/dolls-kill-data-model.yml
+- name: Dolls Kill Storefront Product JSON API
+  description: 'The read-only, unauthenticated JSON endpoints Dolls Kill documents in
+    its own agents.md for agents that only need to browse the store: /products.json,
+    /products/{handle}.json, /collections/{handle}/products.json, /search?q={query}&type=product,
+    and /sitemap.xml. No credentials, no rate-limit headers, no versioning; the same
+    Liquid-object JSON every Shopify storefront exposes.'
+  humanURL: https://www.dollskill.com/agents.md
+  baseURL: https://www.dollskill.com
+  tags:
+  - Products
+  - Catalog
+  - JSON
+  - Read Only
+  properties:
+  - type: Documentation
+    url: https://www.dollskill.com/agents.md
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -20,4 +98,55 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
+  url: https://www.dollskill.com/
+- type: Documentation
+  url: https://www.dollskill.com/agents.md
+- type: LLMsTxt
+  url: llms/dolls-kill-llms.txt
+- type: Support
+  url: https://help.dollskill.com/
+- type: HelpCenter
+  url: https://help.dollskill.com/
+- type: SignUp
+  url: https://account.dollskill.com/authentication/login
+- type: Login
+  url: https://account.dollskill.com/authentication/login
+- type: TermsOfService
+  url: https://www.dollskill.com/pages/termsofuse
+- type: PrivacyPolicy
+  url: https://www.dollskill.com/pages/privacy-policy
+- type: Authentication
+  url: authentication/dolls-kill-authentication.yml
+- type: OAuthScopes
+  url: scopes/dolls-kill-scopes.yml
+- type: WellKnown
+  url: well-known/dolls-kill-well-known.yml
+- type: Conventions
+  url: conventions/dolls-kill-conventions.yml
+- type: Idempotency
+  url: conventions/dolls-kill-conventions.yml
+- type: ErrorCatalog
+  url: errors/dolls-kill-problem-types.yml
+- type: RateLimits
+  url: rate-limits/dolls-kill-rate-limits.yml
+- type: Plans
+  url: plans/dolls-kill-plans-pricing.yml
+- type: Lifecycle
+  url: lifecycle/dolls-kill-lifecycle.yml
+- type: Conformance
+  url: conformance/dolls-kill-conformance.yml
+- type: Packages
+  url: packages/dolls-kill-packages.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DomainSecurity
+  url: security/dolls-kill-domain-security.yml
+- type: SecondaryMarket
   url: https://forgeglobal.com/dolls-kill_stock/
+x-enrichment:
+  date: '2026-08-12'
+  status: enriched
+  artifacts_added: 26
+  pass: local-v1
+x-coverage:
+  state: covered

@@ -1,0 +1,133 @@
+generated: '2026-08-12'
+method: searched
+source: https://www.dollskill.com/agents.md
+derived_from:
+- mcp/dolls-kill-mcp-tools.json
+- graphql/dolls-kill-storefront.graphql
+- observed response headers on https://www.dollskill.com/api/ucp/mcp
+note: 'Dolls Kill publishes no developer documentation beyond agents.md / llms.txt,
+  so these conventions were read from that document, from the live MCP tool input
+  schemas, from the GraphQL SDL, and from response headers observed on real calls.'
+authentication:
+  style: 'Anonymous for reads; UCP agent profile URI for MCP tool invocation; OAuth
+    2.0 authorization code + PKCE for customer-account surfaces.'
+  see: authentication/dolls-kill-authentication.yml
+idempotency:
+  supported: true
+  mechanism: request field
+  field: meta.idempotency-key
+  location: JSON-RPC params.arguments.meta
+  applies_to: [complete_checkout]
+  required: true
+  scope: per checkout completion attempt
+  retention: not published
+  evidence: 'The complete_checkout tool inputSchema declares meta.required = ["ucp-agent",
+    "idempotency-key"] with description "An idempotency key for completing the checkout."
+    It is the only tool of the 13 that requires it, and the only one that moves money.'
+  source: mcp/dolls-kill-mcp-tools.json
+  note: 'No idempotency contract exists on the Storefront GraphQL API or the /products.json
+    endpoints — those are read-only. Idempotency is scoped precisely to the one
+    irreversible operation.'
+pagination:
+  graphql:
+    style: cursor
+    pattern: Relay connections
+    params: [first, last, after, before, reverse, sortKey]
+    response_fields: [edges, node, cursor, pageInfo.hasNextPage, pageInfo.hasPreviousPage,
+      pageInfo.startCursor, pageInfo.endCursor]
+    source: graphql/dolls-kill-storefront.graphql
+  storefront_json:
+    style: page number
+    params: [page, limit]
+    note: '/products.json accepts ?page= and ?limit= (Shopify default 30, max 250);
+      neither is documented in agents.md.'
+  mcp:
+    style: not published
+    note: The catalog tool input schemas expose no cursor or page parameter.
+filtering_and_search:
+  graphql: 'products(query:) and search(query:) accept the Shopify search-query syntax;
+    predictiveSearch offers typeahead. productTags and productTypes expose the facet
+    vocabularies.'
+  storefront_json: '/search?q={query}&type=product'
+  mcp: search_catalog takes a free-text query plus buyer context hints.
+field_expansion:
+  supported: true
+  mechanism: 'GraphQL field selection is the expansion model — a client asks for exactly
+    the fields it needs. There is no sparse-fieldset parameter on the JSON endpoints,
+    which always return the full product object.'
+metadata:
+  graphql: [metafield, metafields, metaobject, metaobjects, cartMetafieldsSet, cartMetafieldDelete]
+  mcp: 'The checkout object accepts an attribution block (referring_domain, click_id_tag,
+    click_id_value, utm_source, utm_medium, utm_campaign, utm_content, utm_term) —
+    marketing metadata, not arbitrary key/value.'
+request_tracing:
+  header: x-request-id
+  direction: response
+  observed_value_shape: uuid + '-' + unix timestamp
+  example_shape: 'db9eb9ab-cdb2-4aff-b43e-1d7f5fbee47d-1786531572'
+  also_present: [server-timing (requestID, servedBy, edge, country, processing, db,
+      render)]
+  note: Returned on both the MCP endpoint and storefront HTML responses.
+versioning:
+  ucp_mcp:
+    scheme: dated
+    current: '2026-04-08'
+    supported: ['2026-04-08', '2026-01-23']
+    signalled_by: 'x-shopify-ucp-mcp-api-version response header, and the supported_versions
+      map in /.well-known/ucp'
+  graphql:
+    scheme: dated, in the URL path
+    pattern: /api/{YYYY-MM}/graphql.json
+    current: '2026-07'
+    supported: ['2025-10', '2026-01', '2026-04', '2026-07']
+    unsupported: ['2026-10 (release candidate)', unstable]
+    introspectable_at: publicApiVersions
+  storefront_json:
+    scheme: unversioned
+  see: lifecycle/dolls-kill-lifecycle.yml
+error_envelope:
+  mcp:
+    format: JSON-RPC 2.0 error object
+    shape: '{jsonrpc, id, error: {code, message, data: {code, content, continue_url}}}'
+    note: 'Not RFC 9457. data.code carries the machine-readable reason string;
+      continue_url points a stuck agent back at a human-usable storefront URL.'
+  graphql:
+    format: GraphQL errors array
+    shape: '{errors: [{message, locations, path, extensions}], extensions: {cost}}'
+  storefront_html:
+    format: HTML error pages with the correct status code (404 verified)
+  see: errors/dolls-kill-problem-types.yml
+rate_limit_signalling:
+  headers_observed: [shopify-complexity-score, shopify-complexity-score-v2]
+  graphql_cost: 'extensions.cost.requestedQueryCost returned on every GraphQL response'
+  standard_headers: 'none — no RateLimit-*, X-RateLimit-* or Retry-After header was
+    observed on any successful call'
+  exhaustion_status: 429
+  published_guidance: 'The MCP endpoint is rate-limited per IP. Back off on 429 responses.'
+  see: rate-limits/dolls-kill-rate-limits.yml
+money:
+  representation: integer minor units + ISO 4217 currency code
+  shape: '{"amount": 2500, "currency": "USD"}'
+  note: 'Stated in the description of every price-bearing MCP tool. Zero-decimal
+    currencies such as JPY are already whole units.'
+  presentment_currencies: [AUD, CAD, CHF, CNY, EUR, GBP, HKD, JPY, KRW, MXN, NOK, NZD,
+    SEK, SGD, USD]
+identifiers:
+  scheme: Shopify global IDs
+  shape: 'gid://shopify/{Type}/{id}'
+  examples_from_schemas:
+  - 'gid://shopify/Checkout/abc123'
+  - 'gid://shopify/Cart/abc123?key=secret'
+  note: The cart GID carries a ?key= capability secret in the identifier itself.
+localization:
+  mechanism: 'context hints on MCP calls (address_country, address_region, postal_code,
+    language BCP 47, currency ISO 4217) and the localization query field on GraphQL'
+  cookies: [localization, cart_currency]
+  ships_to: 200+ countries
+agent_policy:
+  human_approval_before_payment: required
+  scripted_checkout: prohibited
+  recommended_path: 'UCP/MCP endpoints, or the Shopify shopping skill at https://shop.app/SKILL.md'
+  crawling: 'robots.txt allows public product, collection, page, blog, policy, cart
+    and localized HTML'
+  contact: bots@shopify.com

@@ -1,0 +1,155 @@
+generated: '2026-08-12'
+method: derived
+source: graphql/dolls-kill-storefront.graphql
+derivation: 'Entities and relationships were read mechanically from the anonymous
+  GraphQL introspection result captured 2026-08-12 — each relationship below is a
+  real field on a real type, with the field name recorded in `via`. Nothing is
+  inferred from naming conventions. Dolls Kill publishes no object reference, so
+  descriptions are the schema''s own where present.'
+identifier_scheme:
+  format: 'gid://shopify/{Type}/{id}'
+  note: 'Global object identifiers. Cart GIDs additionally carry a capability secret
+    in a ?key= query fragment — gid://shopify/Cart/abc123?key=secret — so possession
+    of the identifier is possession of access to that cart.'
+  resolver: 'node(id:) and nodes(ids:) on QueryRoot resolve any GID to its type.'
+schema_size:
+  types: 424
+  query_fields: 31
+  mutation_fields: 41
+entities:
+- name: Product
+  fields: 36
+  root_queries: [product, products, productRecommendations]
+  domain: catalog
+  relationships:
+  - {to: ProductVariant, kind: has_many, via: variants}
+  - {to: ProductVariant, kind: has_one, via: selectedOrFirstAvailableVariant}
+  - {to: ProductVariant, kind: has_many, via: adjacentVariants}
+  - {to: ProductVariant, kind: has_one, via: variantBySelectedOptions}
+  - {to: Collection, kind: has_many, via: collections}
+  - {to: Image, kind: has_many, via: images}
+  - {to: Media, kind: has_many, via: media}
+  - {to: SellingPlanGroup, kind: has_many, via: sellingPlanGroups}
+  - {to: Metafield, kind: has_many, via: metafields}
+- name: ProductVariant
+  fields: 30
+  domain: catalog
+  note: 'The unit an MCP cart or checkout line item actually references — the
+    create_checkout inputSchema requires line_items[].item.id to be a Product
+    Variant ID.'
+  relationships:
+  - {to: Product, kind: belongs_to, via: product}
+  - {to: ProductVariant, kind: has_many, via: groupedBy}
+  - {to: ProductVariantComponent, kind: has_many, via: components}
+  - {to: SellingPlanAllocation, kind: has_many, via: sellingPlanAllocations}
+  - {to: StoreAvailability, kind: has_many, via: storeAvailability}
+  - {to: QuantityPriceBreak, kind: has_many, via: quantityPriceBreaks}
+  - {to: Metafield, kind: has_many, via: metafields}
+- name: Collection
+  fields: 13
+  root_queries: [collection, collections]
+  domain: catalog
+  relationships:
+  - {to: Product, kind: has_many, via: products}
+  - {to: Metafield, kind: has_many, via: metafields}
+- name: Cart
+  fields: 19
+  root_queries: [cart]
+  domain: commerce
+  note: 'The object underneath every UCP cart and checkout tool — create_checkout
+    accepts a cart_id to convert an existing cart.'
+  relationships:
+  - {to: BaseCartLine, kind: has_many, via: lines}
+  - {to: CartDeliveryGroup, kind: has_many, via: deliveryGroups}
+  - {to: CartBuyerIdentity, kind: has_one, via: buyerIdentity}
+  - {to: CartCost, kind: has_one, via: cost}
+  - {to: Metafield, kind: has_many, via: metafields}
+- name: CartLine
+  fields: 11
+  domain: commerce
+  relationships:
+  - {to: Merchandise, kind: has_one, via: merchandise, note: 'union resolving to ProductVariant'}
+  - {to: CartLineCost, kind: has_one, via: cost}
+- name: Order
+  fields: 41
+  domain: commerce
+  note: 'Not reachable from QueryRoot on the Storefront API — Order is read through
+    the Customer connection, or through the customer-account surfaces that require
+    the customer-account-api:full scope. This is why get_order is an MCP-only tool
+    in the crosswalk.'
+  relationships:
+  - {to: OrderLineItem, kind: has_many, via: lineItems}
+  - {to: MailingAddress, kind: has_one, via: shippingAddress}
+  - {to: MailingAddress, kind: has_one, via: billingAddress}
+  - {to: DiscountApplication, kind: has_many, via: discountApplications}
+  - {to: Metafield, kind: has_many, via: metafields}
+- name: Customer
+  fields: 18
+  root_queries: [customer]
+  domain: identity
+  relationships:
+  - {to: Order, kind: has_many, via: orders}
+  - {to: MailingAddress, kind: has_many, via: addresses}
+  - {to: MailingAddress, kind: has_one, via: defaultAddress}
+  - {to: Metafield, kind: has_many, via: metafields}
+- name: Shop
+  fields: 22
+  root_queries: [shop, paymentSettings]
+  domain: configuration
+  relationships:
+  - {to: Metafield, kind: has_many, via: metafields}
+- name: Article
+  fields: 19
+  root_queries: [article, articles]
+  domain: content
+  relationships:
+  - {to: Blog, kind: belongs_to, via: blog}
+  - {to: Comment, kind: has_many, via: comments}
+  - {to: Metafield, kind: has_many, via: metafields}
+- name: Blog
+  fields: 10
+  root_queries: [blog, blogs]
+  domain: content
+  relationships:
+  - {to: Article, kind: has_many, via: articles}
+  - {to: Article, kind: has_one, via: articleByHandle}
+  - {to: Metafield, kind: has_many, via: metafields}
+- name: Page
+  fields: 12
+  root_queries: [page, pages]
+  domain: content
+  relationships:
+  - {to: Metafield, kind: has_many, via: metafields}
+- name: MailingAddress
+  fields: 19
+  domain: identity
+  relationships: []
+- name: Metafield
+  fields: 12
+  domain: extension
+  note: 'Universal extension point — every major entity carries metafield/metafields.'
+  relationships:
+  - {to: MetafieldReference, kind: has_many, via: references}
+- name: SellingPlan
+  fields: 11
+  domain: commerce
+  relationships:
+  - {to: Metafield, kind: has_many, via: metafields}
+domains:
+  catalog: [Product, ProductVariant, Collection]
+  commerce: [Cart, CartLine, Order, SellingPlan]
+  identity: [Customer, MailingAddress]
+  content: [Article, Blog, Page]
+  configuration: [Shop]
+  extension: [Metafield]
+pagination_convention:
+  pattern: Relay connection
+  note: 'Every has_many relationship above is exposed as a {Type}Connection with
+    edges/node/cursor and pageInfo. See conventions/dolls-kill-conventions.yml.'
+observations:
+- 'The commerce spine is Product -> ProductVariant -> CartLine -> Cart -> Order. An
+  agent must resolve a Product to a ProductVariant GID before it can build a cart —
+  the variant, not the product, is the purchasable unit.'
+- 'Order is the one core entity with no Storefront root query, which is exactly the
+  boundary between the anonymous agent surface and the OAuth-gated customer surface.'
+subway: null

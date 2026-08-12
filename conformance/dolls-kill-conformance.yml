@@ -1,0 +1,133 @@
+generated: '2026-08-12'
+method: probed
+source: live probes of the Dolls Kill public surface on 2026-08-12
+note: 'Every conforms: true below is backed by a document fetched or a call made
+  during this pass. Dolls Kill makes no compliance claims of its own and publishes
+  no certifications; no Compliance pointer is emitted.'
+standards:
+- id: ucp-2026-04-08
+  name: Universal Commerce Protocol 2026-04-08
+  conforms: true
+  evidence: '/.well-known/ucp returns a merchant profile declaring version 2026-04-08
+    (and 2026-01-23), the dev.ucp.shopping service over MCP transport, and the
+    checkout, cart, fulfillment, discount, order, catalog.search and catalog.lookup
+    capabilities.'
+  spec: https://ucp.dev/2026-04-08/specification/overview/
+- id: mcp-2025-06-18
+  name: Model Context Protocol 2025-06-18
+  conforms: true
+  evidence: 'initialize returned protocolVersion 2025-06-18 with serverInfo
+    {name: universal-commerce, version: 0.1.0} and capabilities for tools, prompts,
+    resources and logging. tools/list returned 13 tools each with a JSON Schema
+    2020-12 inputSchema.'
+- id: jsonrpc-2.0
+  name: JSON-RPC 2.0
+  conforms: true
+  evidence: 'All MCP request and response envelopes carry jsonrpc "2.0" with matched
+    id; errors use the standard error object with an implementation-defined code
+    (-32001) plus a data member.'
+- id: json-schema-2020-12
+  name: JSON Schema draft 2020-12
+  conforms: true
+  evidence: 'Every one of the 13 MCP tool inputSchema documents declares
+    $schema: https://json-schema.org/draft/2020-12/schema.'
+- id: graphql
+  name: GraphQL
+  conforms: true
+  evidence: 'Full introspection succeeded anonymously at /api/2026-04/graphql.json,
+    returning 424 types, 31 query fields and 41 mutations. SDL saved to
+    graphql/dolls-kill-storefront.graphql.'
+- id: oidc-discovery
+  name: OpenID Connect Discovery 1.0
+  conforms: true
+  evidence: '/.well-known/openid-configuration returns issuer, authorization_endpoint,
+    token_endpoint, jwks_uri, scopes_supported, response_types_supported, subject_types_supported
+    and id_token_signing_alg_values_supported.'
+- id: oauth2
+  name: OAuth 2.0 authorization code
+  conforms: true
+  evidence: 'grant_types_supported includes authorization_code and refresh_token;
+    the live login redirect from account.dollskill.com carries response_type=code,
+    client_id, redirect_uri, scope, state and nonce.'
+- id: rfc7636-pkce
+  name: 'RFC 7636 — PKCE'
+  conforms: true
+  evidence: code_challenge_methods_supported = ["S256"].
+- id: rfc8414-oauth-metadata
+  name: 'RFC 8414 — OAuth 2.0 Authorization Server Metadata'
+  conforms: true
+  evidence: '/.well-known/oauth-authorization-server returns 200 with authorization
+    server metadata.'
+- id: rfc9728-protected-resource-metadata
+  name: 'RFC 9728 — OAuth 2.0 Protected Resource Metadata'
+  conforms: true
+  evidence: '/.well-known/oauth-protected-resource returns resource, authorization_servers
+    and bearer_methods_supported ["header"].'
+- id: rfc8615-well-known
+  name: 'RFC 8615 — Well-Known URIs'
+  conforms: true
+  evidence: 'Seven /.well-known/ documents served across two hosts; see
+    well-known/dolls-kill-well-known.yml.'
+- id: llmstxt
+  name: llms.txt
+  conforms: true
+  evidence: '/llms.txt returns 200 text/markdown with a real agent instruction document
+    (4,384 bytes), mirroring /agents.md.'
+- id: agents-md
+  name: agents.md agent instructions
+  conforms: true
+  evidence: '/agents.md returns 200 text/markdown and is advertised from robots.txt
+    and from a dedicated sitemap_agentic_discovery.xml.'
+- id: sitemaps-org
+  name: sitemaps.org 0.9
+  conforms: true
+  evidence: '/sitemap.xml returns a valid sitemapindex with product, collection, page
+    and agentic-discovery children.'
+- id: rfc9116-security-txt
+  name: 'RFC 9116 — security.txt'
+  conforms: false
+  evidence: '/.well-known/security.txt returned 404 on www.dollskill.com and
+    help.dollskill.com.'
+- id: a2a
+  name: A2A Agent Card
+  conforms: false
+  evidence: '/.well-known/agent-card.json and /.well-known/agent.json both returned
+    404 on www.dollskill.com and account.dollskill.com.'
+- id: openapi
+  name: OpenAPI
+  conforms: false
+  evidence: 'No OpenAPI or Swagger document on any host. /openapi.json, /openapi.yaml,
+    /swagger.json and /api-docs all miss on www.dollskill.com; api.dollskill.com is
+    behind a Cloudflare bot challenge.'
+- id: asyncapi
+  name: AsyncAPI
+  conforms: false
+  evidence: 'No event, streaming or webhook surface is published by Dolls Kill. Not
+    applicable to a storefront that consumes rather than emits events.'
+- id: rfc9457-problem-details
+  name: 'RFC 9457 — Problem Details'
+  conforms: false
+  evidence: 'Errors use the JSON-RPC 2.0 error object and the GraphQL errors array;
+    no application/problem+json response was observed.'
+- id: rfc8594-sunset
+  name: 'RFC 8594 — Sunset header'
+  conforms: false
+  evidence: No Sunset or Deprecation response header was present on any probed endpoint.
+- id: ratelimit-headers
+  name: 'RFC 9331 — RateLimit header fields'
+  conforms: false
+  evidence: 'Only proprietary shopify-complexity-score headers are returned; no
+    RateLimit-*, X-RateLimit-* or Retry-After.'
+- id: pci-dss
+  name: PCI DSS
+  conforms: unknown
+  evidence: 'Card handling is delegated to Shopify and to the declared payment handlers
+    (Google Pay, Shopify Card, Shop Pay). Dolls Kill publishes no compliance statement
+    of its own, so no claim is recorded either way.'
+summary:
+  conforms: 14
+  does_not_conform: 7
+  unknown: 1
+  certifications_published: []
+  trust_center: null
+  compliance_program_published: false

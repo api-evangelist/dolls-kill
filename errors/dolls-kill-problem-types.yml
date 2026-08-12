@@ -1,0 +1,65 @@
+generated: '2026-08-12'
+method: probed
+source: live JSON-RPC and HTTP probes of https://www.dollskill.com/api/ucp/mcp and the storefront
+format: jsonrpc-2.0
+format_note: 'Not RFC 9457. Dolls Kill publishes no error reference; every entry below
+  was observed on a real call made on 2026-08-12, or is the documented status the
+  provider names in its own agent instructions. Nothing here is inferred from a spec.'
+envelope:
+  mcp: '{"jsonrpc":"2.0","id":<id>,"error":{"code":<int>,"message":<string>,"data":{"code":<string>,"content":<string>,"continue_url":<url>}}}'
+  graphql: '{"errors":[{"message":...}],"extensions":{"cost":{...}}}'
+  http: 'HTTP status only; storefront 404s return an HTML page, /openapi.json returns an empty application/json body with 404'
+problems:
+- code: -32001
+  data_code: invalid_profile_url
+  title: UCP discovery failed — missing agent profile URI
+  message: 'Unable to fetch agent profile: Missing profile uri'
+  http_status: 200
+  surface: https://www.dollskill.com/api/ucp/mcp
+  triggered_by: 'tools/call, prompts/list or resources/list without meta.ucp-agent.profile'
+  remediation: 'Publish an HTTP-resolvable UCP agent profile document and pass its URI as meta.ucp-agent.profile on every call.'
+  continue_url: https://dolls-test.myshopify.com/
+  observed: true
+- code: -32001
+  data_code: profile_unreachable
+  title: UCP discovery failed — agent profile could not be fetched
+  message: 'Unable to fetch agent profile: Http error'
+  http_status: 200
+  surface: https://www.dollskill.com/api/ucp/mcp
+  triggered_by: 'meta.ucp-agent.profile pointing at a URI the merchant cannot fetch'
+  remediation: 'Serve the agent profile at a publicly reachable HTTPS URL returning 2xx.'
+  continue_url: https://dolls-test.myshopify.com/
+  observed: true
+- code: 404
+  title: Not found
+  http_status: 404
+  surface: https://www.dollskill.com
+  triggered_by: 'unknown storefront paths, and every /.well-known/ path the store does not serve (security.txt, api-catalog, ai-plugin.json, agent-card.json, agent.json)'
+  content_type: text/html
+  observed: true
+- code: 403
+  title: Forbidden
+  http_status: 403
+  surface: https://www.dollskill.com/pages/contact-us
+  triggered_by: 'certain storefront paths respond 403 rather than 404'
+  observed: true
+- code: 406
+  title: Not acceptable
+  http_status: 406
+  surface: https://account.dollskill.com
+  triggered_by: 'requesting the customer-account host without an HTML Accept header; with Accept: text/html the same URL 200s through to the OAuth login'
+  observed: true
+- code: 429
+  title: Too many requests
+  http_status: 429
+  surface: https://www.dollskill.com/api/ucp/mcp
+  triggered_by: 'exceeding the per-IP rate limit'
+  remediation: 'Back off on 429 responses.'
+  source: https://www.dollskill.com/agents.md
+  observed: false
+  observed_note: 'Documented by the provider; not reproduced during this pass — probing to exhaustion was not attempted.'
+problem_count: 6
+gaps:
+- 'No published error reference, error-code registry, or problem-type catalog exists on any Dolls Kill host.'
+- 'The MCP error surface exposes only the UCP discovery failure class anonymously; the transactional error classes (out of stock, payment declined, invalid variant, address unserviceable) sit behind a resolvable agent profile and were not exercised.'
+- 'JSON-RPC error data.code is a machine-readable string, but no enumeration of its possible values is published.'

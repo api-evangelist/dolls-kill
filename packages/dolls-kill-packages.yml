@@ -1,0 +1,52 @@
+generated: '2026-08-12'
+method: searched
+source: 'registry lookups against npm, PyPI, RubyGems, crates.io and GitHub on 2026-08-12'
+package_count: 0
+official_package_count: 0
+packages: []
+note: 'Dolls Kill publishes no client libraries. It is a retailer on Shopify, not an
+  API vendor, and ships no first-party SDK in any language. No SDKs pointer is emitted
+  in apis.yml because there is no SDK to point at. Agents integrate either through
+  the MCP endpoint directly, through a generic Shopify Storefront GraphQL client, or
+  through the Shopify shopping skill Dolls Kill itself recommends.'
+searched_registries:
+- registry: npm
+  queries: [dollskill, dolls-kill, '@dollskill/sdk']
+  status: 404
+  result: none
+- registry: pypi
+  queries: [dollskill, dolls-kill]
+  status: 404
+  result: none
+- registry: rubygems
+  queries: [dollskill]
+  status: 404
+  result: none
+- registry: crates.io
+  queries: [dollskill]
+  status: 403
+  result: 'not found; registry answered 403 to the unauthenticated probe'
+- registry: github
+  queries: [dollskill, dolls-kill, dollskill-com, dollskill-tools]
+  status: 200
+  result: 'No Dolls Kill GitHub organization exists. Two placeholder orgs (dollskill-com,
+    created 2021-06-03; dollskill-tools, created 2026-01-27) have zero public repos,
+    no name, no description and no linked website, so neither is verifiable as
+    first-party. No GitHubOrganization pointer is emitted.'
+third_party_paths:
+- name: Shopify shopping skill
+  url: https://shop.app/SKILL.md
+  official: false
+  first_party_to: Shopify
+  status: 200
+  note: 'Dolls Kill''s own robots.txt, agents.md and llms.txt all explicitly recommend
+    this skill as the preferred way for a personal-shopping agent to transact. It is
+    Shopify''s artifact, not Dolls Kill''s, so it is recorded here as a distribution
+    path rather than as a Dolls Kill package.'
+consumer_apps:
+- platform: iOS
+  url: https://apps.apple.com/us/app/dolls-kill/id990363143
+  note: 'Consumer shopping app, not a developer SDK. Recorded for completeness only.'
+- platform: Android
+  url: https://play.google.com/store/apps/details?id=co.tapcart.app.id_64eOF0hvth
+  note: 'Consumer shopping app built on Tapcart; not a developer SDK.'

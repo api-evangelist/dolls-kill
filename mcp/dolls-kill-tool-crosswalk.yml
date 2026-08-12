@@ -1,0 +1,148 @@
+generated: '2026-08-12'
+method: derived
+source: mcp/dolls-kill-mcp-tools.json + graphql/dolls-kill-storefront.graphql
+note: 'Dolls Kill publishes no OpenAPI, so this crosswalk binds each MCP tool to the
+  Shopify Storefront GraphQL operation(s) that back it rather than to REST operationIds.
+  Every GraphQL field named below was verified present in the anonymous introspection
+  result captured on 2026-08-12; every MCP tool name was verified present in the live
+  tools/list response. The binding itself is semantic — Shopify does not publish a
+  tool-to-field map — so confidence is set honestly per row.'
+surfaces:
+  openapi: null
+  openapi_note: no OpenAPI or Swagger document is published on any Dolls Kill host
+  graphql:
+    endpoint: https://www.dollskill.com/api/2026-04/graphql.json
+    introspection: open
+    gated: false
+    sdl: graphql/dolls-kill-storefront.graphql
+    query_fields: 31
+    mutation_fields: 41
+    types: 424
+  mcp:
+    endpoint: https://www.dollskill.com/api/ucp/mcp
+    tools_list: open
+    tools_call: gated
+    gated_note: 'tools/call requires a resolvable UCP agent profile URI (meta.ucp-agent.profile);
+      tools/list and initialize answer anonymously'
+    manifest: mcp/dolls-kill-mcp.yml
+  rest_json:
+    endpoints:
+    - /products.json
+    - /products/{handle}.json
+    - /collections/{handle}/products.json
+    - /search?q={query}&type=product
+    documented_in: https://www.dollskill.com/agents.md
+    gated: false
+crosswalk:
+- tool: get_product
+  category: catalog
+  graphql: [product]
+  binding: graphql
+  confidence: high
+  note: Direct single-product lookup by identifier; also reachable unauthenticated at
+    /products/{handle}.json.
+- tool: search_catalog
+  category: catalog
+  graphql: [search, predictiveSearch, products]
+  binding: graphql
+  confidence: high
+  note: Fans out across the three catalog-search entry points; the dev.shopify.catalog
+    UCP capability extends dev.ucp.shopping.catalog.search.
+- tool: lookup_catalog
+  category: catalog
+  graphql: [nodes, products, collection]
+  binding: graphql
+  confidence: medium
+  note: Multi-identifier product/variant lookup; nodes resolves gid:// identifiers of
+    either kind.
+- tool: create_cart
+  category: cart
+  graphql: [cartCreate]
+  binding: graphql
+  confidence: high
+- tool: get_cart
+  category: cart
+  graphql: [cart]
+  binding: graphql
+  confidence: high
+- tool: update_cart
+  category: cart
+  graphql: [cartLinesAdd, cartLinesUpdate, cartLinesRemove, cartAttributesUpdate, cartNoteUpdate,
+    cartBuyerIdentityUpdate, cartDiscountCodesUpdate, cartGiftCardCodesAdd]
+  binding: graphql
+  confidence: high
+  note: One MCP tool collapses eight GraphQL mutations; the tool takes a whole cart
+    object and diffs it server-side.
+- tool: create_checkout
+  category: checkout
+  graphql: [cartCreate, cartPrepareForCompletion]
+  binding: graphql
+  confidence: medium
+  note: 'UCP checkout is modelled on the Shopify cart object — the tool accepts a cart_id
+    of form gid://shopify/Cart/abc123?key=secret to convert an existing cart.'
+- tool: get_checkout
+  category: checkout
+  graphql: [cart, cartCompletionAttempt]
+  binding: graphql
+  confidence: medium
+- tool: update_checkout
+  category: checkout
+  graphql: [cartDeliveryAddressesUpdate, cartDeliveryAddressesAdd, cartDeliveryAddressesReplace,
+    cartSelectedDeliveryOptionsUpdate, cartPaymentUpdate, cartBillingAddressUpdate,
+    cartDiscountCodesUpdate]
+  binding: graphql
+  confidence: medium
+  note: Covers the fulfillment, payment-instrument and discount branches of the checkout
+    input schema.
+- tool: complete_checkout
+  category: checkout
+  graphql: [cartSubmitForCompletion, cartCompletionAttempt]
+  binding: graphql
+  confidence: high
+  note: The only idempotent tool — requires meta.idempotency-key — and the only one
+    gated on explicit contemporaneous buyer approval of payment.
+mcp_only:
+- tool: cancel_cart
+  reason: No Storefront GraphQL mutation cancels or deletes a cart; the closest field
+    is cartRemovePersonalData, which has different semantics. UCP-layer behaviour.
+- tool: cancel_checkout
+  reason: No Storefront GraphQL mutation cancels a checkout. UCP-layer behaviour with
+    no public GraphQL equivalent.
+- tool: get_order
+  reason: The Storefront API exposes no order query. Order retrieval lives on Shopify's
+    Customer Account API, which requires the customer-account-api:full OAuth scope
+    (see scopes/dolls-kill-scopes.yml).
+graphql_only:
+- capability: Content
+  fields: [article, articles, blog, blogs, page, pages, menu, metaobject, metaobjects]
+  reason: Editorial and CMS content is not part of the UCP shopping service.
+- capability: Customer accounts
+  fields: [customer, customerCreate, customerUpdate, customerRecover, customerActivate,
+    customerActivateByUrl, customerReset, customerResetByUrl, customerAddressCreate,
+    customerAddressUpdate, customerAddressDelete, customerDefaultAddressUpdate, customerAccessTokenCreate,
+    customerAccessTokenCreateWithMultipass, customerAccessTokenRenew, customerAccessTokenDelete]
+  reason: Account lifecycle is out of scope for the agent commerce surface; UCP carries
+    only a buyer email/phone.
+- capability: Merchandising
+  fields: [productRecommendations, productTags, productTypes, collections, collection]
+  reason: No MCP tool surfaces recommendations or facet vocabularies.
+- capability: Store metadata
+  fields: [shop, paymentSettings, localization, locations, publicApiVersions, sitemap,
+    urlRedirects, node, nodes]
+  reason: Read-only store configuration, exposed to GraphQL clients only.
+- capability: Cart extras
+  fields: [cartClone, cartMetafieldsSet, cartMetafieldDelete, cartGiftCardCodesRemove,
+    cartGiftCardCodesUpdate, cartRemovePersonalData, shopPayInstallmentsPricing, shopPayPaymentRequestSessionCreate]
+  reason: Metafield, gift-card and Shop Pay session operations have no UCP tool.
+rest_only: []
+rest_only_note: 'The unauthenticated /products.json family is a strict read-only subset
+  of what both the MCP catalog tools and the GraphQL product fields already return;
+  no capability is exclusive to it.'
+coverage:
+  mcp_tools_total: 13
+  mcp_tools_bound_to_graphql: 10
+  mcp_only: 3
+  graphql_query_fields_total: 31
+  graphql_mutation_fields_total: 41
+  graphql_fields_referenced_by_a_tool: 22
+  graphql_only_capability_groups: 5

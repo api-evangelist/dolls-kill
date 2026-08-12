@@ -1,0 +1,67 @@
+generated: '2026-08-12'
+method: searched
+source: https://www.dollskill.com/agents.md
+note: 'Dolls Kill operates no versioning, deprecation or status policy of its own.
+  The lifecycle recorded here is the platform lifecycle it inherits from Shopify and
+  from the Universal Commerce Protocol, observed live rather than read from a policy
+  page. No status page, SLA, or deprecation policy is published on any Dolls Kill host.'
+versioning:
+- surface: UCP commerce MCP API
+  scheme: dated
+  current: '2026-04-08'
+  supported: ['2026-04-08', '2026-01-23']
+  discovery: https://www.dollskill.com/.well-known/ucp
+  header: x-shopify-ucp-mcp-api-version
+  spec: https://ucp.dev/2026-04-08/specification/overview/
+- surface: Storefront GraphQL API
+  scheme: dated, in the URL path
+  pattern: /api/{YYYY-MM}/graphql.json
+  current: '2026-07'
+  in_use_by_this_profile: '2026-04'
+  supported: ['2025-10', '2026-01', '2026-04', '2026-07']
+  unsupported: ['2026-10', 'unstable']
+  unsupported_note: '2026-10 is the release candidate; unstable tracks trunk. Both
+    are reachable but flagged supported: false by the publicApiVersions query.'
+  introspectable_at: 'query { publicApiVersions { handle displayName supported } }'
+  observed: '2026-08-12'
+- surface: Storefront product JSON endpoints
+  scheme: unversioned
+  note: '/products.json and friends carry no version segment and no deprecation signal.'
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  signal: 'The Storefront GraphQL schema marks individual fields @deprecated inline —
+    the SDL captured at graphql/dolls-kill-storefront.graphql carries those markers —
+    and publicApiVersions flags versions supported: false. That is the whole deprecation
+    surface; there is no dated policy, no notice period and no Sunset header.'
+  observed_note: 'No Deprecation or Sunset response header was present on any probed
+    endpoint.'
+sla:
+  url: null
+  uptime_target: null
+  published: false
+status_page:
+  url: null
+  published: false
+  note: 'Dolls Kill publishes no status page. status.dollskill.com does not resolve
+    to one and no status link appears in the storefront navigation, agents.md, or
+    llms.txt. The underlying platform status page (shopifystatus.com) is Shopify''s,
+    covers all Shopify merchants, and is not a Dolls Kill artifact — no StatusPage
+    pointer is emitted for it.'
+changelog:
+  url: null
+  published: false
+  note: 'No dated changelog or release notes for any Dolls Kill surface. Version
+    turnover is visible only through the platform version calendars above.'
+deprecated_operations: []
+searched:
+- url: https://www.dollskill.com/agents.md
+  status: 200
+- url: https://www.dollskill.com/.well-known/ucp
+  status: 200
+- url: https://www.dollskill.com/api/2026-04/graphql.json
+  status: 200
+  note: publicApiVersions query

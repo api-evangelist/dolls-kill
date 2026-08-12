@@ -1,0 +1,30 @@
+generated: '2026-08-12'
+method: generated
+grounding: 'These skills are grounded in the 13 MCP tool names and required-field lists
+  returned by a live tools/list against https://www.dollskill.com/api/ucp/mcp on
+  2026-08-12 (verbatim at mcp/dolls-kill-mcp-tools.json), in the GraphQL root fields
+  returned by anonymous introspection (graphql/dolls-kill-storefront.graphql), and in
+  the endpoints and agent rules Dolls Kill publishes at /agents.md and /.well-known/ucp.
+  Dolls Kill publishes no OpenAPI, so operations are MCP tool names rather than REST
+  operationIds. No tool, field, endpoint or rule named in these skills was invented —
+  each was observed on a real call or read from a provider-published document.'
+provider_published_skills: none
+provider_published_skills_note: 'Dolls Kill publishes /agents.md (saved verbatim at
+  llms/dolls-kill-agents.md) but no AGENTS.md skill files of its own. Its instructions
+  point agents at Shopify''s cross-store skill at https://shop.app/SKILL.md, which is
+  Shopify''s artifact, not Dolls Kill''s.'
+skills:
+- file: dolls-kill-discover-agent-surface.md
+  name: Discover the Dolls Kill agent commerce surface
+  api: mcp/dolls-kill-mcp.yml
+  operations: [initialize, tools/list]
+- file: dolls-kill-search-catalog.md
+  name: Search and read the Dolls Kill catalog
+  api: mcp/dolls-kill-mcp.yml
+  operations: [search_catalog, lookup_catalog, get_product]
+- file: dolls-kill-cart-and-checkout.md
+  name: Build a Dolls Kill cart and complete checkout with buyer approval
+  api: mcp/dolls-kill-mcp.yml
+  operations: [create_cart, get_cart, update_cart, cancel_cart, create_checkout, get_checkout,
+    update_checkout, complete_checkout, cancel_checkout, get_order]
+skill_count: 3

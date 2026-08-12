@@ -1,0 +1,38 @@
+generated: '2026-08-12'
+method: searched
+source: https://www.dollskill.com/agents.md
+plan_count: 0
+note: 'Dolls Kill is a direct-to-consumer fashion retailer, not an API vendor. It
+  publishes no API pricing page, no developer plans, no tiers, no quotas and no
+  metering. Every machine-readable surface found on the property — the UCP/MCP
+  commerce endpoint, the Storefront GraphQL API, the product JSON endpoints and the
+  /.well-known/ discovery documents — is served free and, for reads, anonymously.
+  The commercial model is retail: the API exists so that shopping agents can put
+  merchandise in a cart and hand a human a checkout to approve. Revenue comes from
+  the order, not from API access.'
+plans: []
+access_model:
+  cost: free
+  metering: none
+  quota: none
+  billing: none
+  signup_required_for_api: false
+  signup_url: https://account.dollskill.com/authentication/login
+  signup_note: 'A customer account is required only for order history and the
+    customer-account OAuth scopes, never for catalog, cart or checkout tools.'
+searched:
+- url: https://www.dollskill.com/agents.md
+  status: 200
+  finding: 'documents endpoints and agent rules; no pricing, plans or quotas'
+- url: https://www.dollskill.com/llms.txt
+  status: 200
+  finding: 'mirrors agents.md; no pricing'
+- url: https://www.dollskill.com/.well-known/ucp
+  status: 200
+  finding: 'capabilities and payment handlers; no commercial terms for API access'
+- url: https://www.dollskill.com/pages/termsofuse
+  status: 200
+  finding: 'consumer terms of use; no developer or API terms'
+related:
+  loyalty_program: https://www.dollskill.com/pages/stash-membership
+  loyalty_note: 'The STASH membership is a consumer loyalty program, not an API plan.'

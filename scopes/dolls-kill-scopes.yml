@@ -1,0 +1,54 @@
+generated: '2026-08-12'
+method: searched
+source: https://www.dollskill.com/.well-known/openid-configuration
+docs: https://www.dollskill.com/.well-known/oauth-authorization-server
+note: 'Not derived from OpenAPI — Dolls Kill publishes none. These scopes were read
+  verbatim from the scopes_supported array of the live OpenID Connect discovery document
+  the storefront serves, confirmed identical on the RFC 8414 authorization-server
+  metadata document and observed again in the live login redirect from
+  https://account.dollskill.com/.'
+schemes:
+- name: Customer Account OAuth 2.0
+  source: https://www.dollskill.com/.well-known/openid-configuration
+  issuer: https://shopify.com/authentication/63463358721
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://account.dollskill.com/authentication/oauth/authorize
+    tokenUrl: https://account.dollskill.com/authentication/oauth/token
+    pkce: S256
+scopes:
+- scope: openid
+  description: Standard OpenID Connect scope; requests an ID token identifying the
+    signed-in customer.
+  flows: [authorizationCode]
+  sources: ['https://www.dollskill.com/.well-known/openid-configuration']
+- scope: email
+  description: Access to the customer's email address and email_verified claim.
+  flows: [authorizationCode]
+  sources: ['https://www.dollskill.com/.well-known/openid-configuration']
+- scope: customer-account-api:full
+  description: Full access to the Shopify Customer Account API for the authenticated
+    customer — orders, addresses, payment methods and profile. Observed in the live
+    login redirect issued by account.dollskill.com, which requests openid+email+customer-account-api:full.
+  flows: [authorizationCode]
+  sources: ['https://www.dollskill.com/.well-known/openid-configuration']
+- scope: customer-account-mcp-api:full
+  description: Full access to the Customer Account MCP API — the authenticated,
+    customer-scoped counterpart to the anonymous UCP commerce MCP endpoint at
+    /api/ucp/mcp. This is the scope an agent would need to read a buyer's own order
+    history rather than only transact on the public catalog.
+  flows: [authorizationCode]
+  sources: ['https://www.dollskill.com/.well-known/openid-configuration']
+scope_count: 4
+observations:
+- 'The scope surface is coarse — both API scopes are :full, with no read/write or
+  per-resource split. An agent granted customer-account-api:full receives the whole
+  customer record.'
+- 'The public UCP commerce MCP endpoint requires no OAuth scope at all; it is gated
+  on a UCP agent profile URI instead. OAuth applies only to customer-account surfaces.'
+x-evidence:
+- url: https://www.dollskill.com/.well-known/openid-configuration
+  status: 200
+- url: https://account.dollskill.com/
+  status: 200
+  note: redirects to /authentication/login with scope=openid+email+customer-account-api%3Afull
