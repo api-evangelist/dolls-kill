@@ -15,7 +15,7 @@ image: https://www.dollskill.com/cdn/shop/files/logo.jpg?v=1709315110
 url: https://raw.githubusercontent.com/api-evangelist/dolls-kill/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-specificationVersion: '0.20'
+specificationVersion: '0.23'
 created: '2026-08-12'
 modified: '2026-08-12'
 tags:
