@@ -24,100 +24,136 @@ server:
     discovery: https://www.dollskill.com/.well-known/ucp
     profile_endpoint_in_discovery: https://dolls-test.myshopify.com/api/ucp/mcp
   capabilities:
-    tools: {listChanged: true}
-    prompts: {listChanged: true}
-    resources: {listChanged: true}
+    tools:
+      listChanged: true
+    prompts:
+      listChanged: true
+    resources:
+      listChanged: true
     logging: {}
 access:
   tools_list: anonymous
-  tools_call: 'gated — requires a resolvable UCP agent profile URI at meta.ucp-agent.profile;
-    an unreachable or absent profile returns JSON-RPC error -32001 (invalid_profile_url
-    / profile_unreachable)'
-  prompts_list: 'gated — same UCP agent-profile requirement; returns -32001 anonymously'
-  resources_list: 'gated — same UCP agent-profile requirement; returns -32001 anonymously'
-  payment: 'human-in-the-loop required — the storefront robots.txt, agents.md and llms.txt
-    all state agents must not complete checkout, payment, or order placement without
-    explicit contemporaneous buyer approval'
+  tools_call: gated — requires a resolvable UCP agent profile URI at meta.ucp-agent.profile; an unreachable
+    or absent profile returns JSON-RPC error -32001 (invalid_profile_url / profile_unreachable)
+  prompts_list: gated — same UCP agent-profile requirement; returns -32001 anonymously
+  resources_list: gated — same UCP agent-profile requirement; returns -32001 anonymously
+  payment: human-in-the-loop required — the storefront robots.txt, agents.md and llms.txt all state agents
+    must not complete checkout, payment, or order placement without explicit contemporaneous buyer approval
 tools_file: mcp/dolls-kill-mcp-tools.json
 tool_count: 13
 tools:
 - name: get_checkout
   category: checkout
-  description: Returns details about the checkout, including line items, totals, and
-    any applicable discounts or taxes.
-  required: [meta, id]
+  description: Returns details about the checkout, including line items, totals, and any applicable discounts
+    or taxes.
+  required:
+  - meta
+  - id
 - name: create_checkout
   category: checkout
-  description: Creates a checkout. Returns checkout details, including line items,
-    totals, and any applicable discounts or taxes.
-  required: [meta, checkout]
+  description: Creates a checkout. Returns checkout details, including line items, totals, and any applicable
+    discounts or taxes.
+  required:
+  - meta
+  - checkout
 - name: update_checkout
   category: checkout
-  description: Updates a checkout. Returns checkout details, including line items,
-    totals, and any applicable discounts or taxes.
-  required: [meta, checkout, id]
+  description: Updates a checkout. Returns checkout details, including line items, totals, and any applicable
+    discounts or taxes.
+  required:
+  - meta
+  - checkout
+  - id
 - name: complete_checkout
   category: checkout
-  description: Completes a checkout and returns the checkout result, including order
-    ID, Thank You Page URL, or any errors encountered.
-  required: [meta, id, checkout]
+  description: Completes a checkout and returns the checkout result, including order ID, Thank You Page
+    URL, or any errors encountered.
+  required:
+  - meta
+  - id
+  - checkout
   idempotency_key: meta.idempotency-key
   human_approval_required: true
 - name: cancel_checkout
   category: checkout
   description: Cancels a checkout.
-  required: [meta, id]
+  required:
+  - meta
+  - id
 - name: get_cart
   category: cart
   description: Get the cart contents.
-  required: [meta, id]
+  required:
+  - meta
+  - id
 - name: create_cart
   category: cart
   description: Creates a new cart.
-  required: [meta, cart]
+  required:
+  - meta
+  - cart
 - name: update_cart
   category: cart
   description: Perform updates to a cart.
-  required: [meta, cart, id]
+  required:
+  - meta
+  - cart
+  - id
 - name: cancel_cart
   category: cart
   description: Cancels a cart.
-  required: [meta, id]
+  required:
+  - meta
+  - id
 - name: get_order
   category: order
   description: Get the details of an order.
-  required: [meta, id]
+  required:
+  - meta
+  - id
 - name: search_catalog
   category: catalog
   description: Search for products from the online store, hosted on Shopify.
-  required: [meta, catalog]
+  required:
+  - meta
+  - catalog
 - name: lookup_catalog
   category: catalog
   description: Look up multiple products or variants by identifier.
-  required: [meta, catalog]
+  required:
+  - meta
+  - catalog
 - name: get_product
   category: catalog
   description: Retrieve complete product detail by identifier. Returns a singular product.
-  required: [meta, catalog]
+  required:
+  - meta
+  - catalog
 notes:
-- 'Every tool carries a complete JSON Schema 2020-12 inputSchema; the verbatim tools/list
-  result is saved at mcp/dolls-kill-mcp-tools.json (95KB) and is the authoritative
-  input contract, standing in for an OpenAPI this provider does not publish.'
-- 'Money is expressed as an integer in ISO 4217 minor units paired with a currency
-  code — {"amount": 2500, "currency": "USD"} is $25.00 — stated in every price-bearing
-  tool description.'
-- 'The /.well-known/ucp discovery document advertises the service endpoint as
-  https://dolls-test.myshopify.com/api/ucp/mcp, the store''s myshopify.com hostname,
-  rather than the www.dollskill.com host the storefront actually serves it from. The
-  www host answers tools/list correctly; the discovery document is the one naming the
-  other hostname. Recorded as observed, not corrected.'
+- Every tool carries a complete JSON Schema 2020-12 inputSchema; the verbatim tools/list result is saved
+  at mcp/dolls-kill-mcp-tools.json (95KB) and is the authoritative input contract, standing in for an
+  OpenAPI this provider does not publish.
+- 'Money is expressed as an integer in ISO 4217 minor units paired with a currency code — {"amount": 2500,
+  "currency": "USD"} is $25.00 — stated in every price-bearing tool description.'
+- The /.well-known/ucp discovery document advertises the service endpoint as https://dolls-test.myshopify.com/api/ucp/mcp,
+  the store's myshopify.com hostname, rather than the www.dollskill.com host the storefront actually serves
+  it from. The www host answers tools/list correctly; the discovery document is the one naming the other
+  hostname. Recorded as observed, not corrected.
 x-evidence:
   fetched: '2026-08-12'
   url: https://www.dollskill.com/api/ucp/mcp
-  method: 'POST {"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+  method: POST {"jsonrpc":"2.0","id":1,"method":"tools/list"}
   http_status: 200
   content_type: application/json; charset=utf-8
   response_headers:
     x-shopify-ucp-mcp-api-version: '2026-04-08'
     x-request-id: present
     shopify-complexity-score: '27'
+deployment:
+  mode: remote
+  endpoint: https://www.dollskill.com/api/ucp/mcp
+  verified: probed
+  probe: live
+  tools: 13
+  checked: '2026-08-12'
+  source: catalog MCP census
