@@ -21,6 +21,19 @@ modified: '2026-08-12'
 tags:
 - Company
 - Retail
+- E-Commerce
+- Fashion
+- Apparel
+- Commerce
+- Shopify
+- Agentic Commerce
+- Universal Commerce Protocol
+- MCP
+- GraphQL
+- Direct to Consumer
+tags_raw:
+- Company
+- Retail
 - E-commerce
 - Fashion
 - Apparel
@@ -84,6 +97,11 @@ apis:
   humanURL: https://www.dollskill.com/agents.md
   baseURL: https://www.dollskill.com
   tags:
+  - Product
+  - Catalog
+  - JSON
+  - Read Only
+  tags_raw:
   - Products
   - Catalog
   - JSON
