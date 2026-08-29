@@ -11,6 +11,17 @@ description: 'Dolls Kill is a Los Angeles-based online fashion boutique for alte
   Connect discovery for customer accounts. Dolls Kill publishes no developer portal,
   no OpenAPI, no SDKs and no API pricing — the API surface exists to let shopping
   agents transact, under an explicit human-approval-before-payment rule.'
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://www.dollskill.com/cdn/shop/files/logo.jpg?v=1709315110
 url: https://raw.githubusercontent.com/api-evangelist/dolls-kill/refs/heads/main/apis.yml
 x-type: company
