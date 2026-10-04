@@ -94,6 +94,9 @@ apis:
     url: mcp/dolls-kill-tool-crosswalk.yml
   - type: Documentation
     url: https://www.dollskill.com/agents.md
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: ucp
 - name: Dolls Kill Storefront GraphQL API
   description: 'The Shopify Storefront GraphQL API as served from Dolls Kill''s own
     host at /api/{version}/graphql.json. Anonymous introspection succeeds without a
@@ -114,6 +117,9 @@ apis:
     url: graphql/dolls-kill-storefront.graphql
   - type: DataModel
     url: data-model/dolls-kill-data-model.yml
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: storefront-graphql
 - name: Dolls Kill Storefront Product JSON API
   description: 'The read-only, unauthenticated JSON endpoints Dolls Kill documents in
     its own agents.md for agents that only need to browse the store: /products.json,
@@ -121,7 +127,6 @@ apis:
     and /sitemap.xml. No credentials, no rate-limit headers, no versioning; the same
     Liquid-object JSON every Shopify storefront exposes.'
   humanURL: https://www.dollskill.com/agents.md
-  baseURL: https://www.dollskill.com
   tags:
   - Product
   - Catalog
@@ -135,6 +140,9 @@ apis:
   properties:
   - type: Documentation
     url: https://www.dollskill.com/agents.md
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: storefront-json
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
